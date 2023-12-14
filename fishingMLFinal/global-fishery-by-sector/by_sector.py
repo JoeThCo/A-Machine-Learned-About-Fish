@@ -1,9 +1,12 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-from matplotlib import patheffects
-from sklearn.linear_model import LinearRegression
 import numpy as np
+
+from matplotlib import patheffects
+
+from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
 
 by_sector_path = 'global-fishery-catch-by-sector.csv'
 sectors = ['Artisanal (small-scale commercial)', 'Discards', 'Industrial (large-scale commercial)', 'Recreational',
@@ -23,6 +26,7 @@ for sector in sectors:
     X_lr = fishery_data[lr_filter]['Year'].values.reshape(-1, 1)
     y_lr = fishery_data[lr_filter][sector]
 
+    # Linear regression
     model_lr = LinearRegression()
     model_lr.fit(X_lr, y_lr)
 
@@ -30,22 +34,27 @@ for sector in sectors:
     model_knn = KNeighborsRegressor(n_neighbors=3)
     model_knn.fit(X, y)
 
-    # Predictions for Linear Regression (extrapolation)
-    X_extended_lr = np.arange(2010, 2015).reshape(-1, 1)
-    y_prediction_lr_extended = model_lr.predict(X_extended_lr)
+    # Decision Tree Regression
+    model_dt = DecisionTreeRegressor()
+    model_dt.fit(X, y)
 
-    # Predictions for k-NN (entire range)
+    # X Predictions
+    X_extended_lr = np.arange(2010, 2015).reshape(-1, 1)
+
+    # Y Predictions
+    y_prediction_lr_extended = model_lr.predict(X_extended_lr)
     y_prediction_knn = model_knn.predict(X)
+    y_prediction_dt_extended = model_dt.predict(X)
 
     # plot points
     plt.scatter(X, y)
 
-    # Plot the Linear Regression extrapolation (2010-2015)
-    line, = plt.plot(X_extended_lr, y_prediction_lr_extended, linestyle='dashed')
+    # Plot
+    line, = plt.plot(X_extended_lr, y_prediction_lr_extended, label=f'{sector}', linestyle='dashed')
     line_color = line.get_color()
 
-    # Plot the k-NN regression line
-    plt.plot(X, y_prediction_knn, label=f'{sector} k-NN Regression', linestyle='solid', color=line_color)
+    plt.plot(X, y_prediction_knn, linestyle='solid', color=line_color)
+    # plt.plot(X, y_prediction_dt_extended, label=f'{sector} DT', linestyle='-.')
 
     # labels
     predicted_value_2015_lr = y_prediction_lr_extended[-1]
