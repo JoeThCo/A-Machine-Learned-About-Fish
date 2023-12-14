@@ -61,3 +61,20 @@ plt.legend()
 
 plt.grid(True)
 plt.show()
+
+# Intro
+# ML techniques
+
+# Term Project Rules
+# Make a team
+# Pick ML algorithums
+# Show results thought cross validation (How to show this?)
+# Report
+
+# Report
+# Description of ML algorithim I picked for the dataset
+# Data visual
+# data cleaning
+# 3 ML techniques or models you
+# Picked the best one
+# Validated the results and metrics for model assignment
