@@ -84,4 +84,16 @@ for sector in sectors:
     plt.legend()
     plt.grid(True)
 
+    # Get final prediction values for each model
+    final_pred_lr = y_pred_lr_sorted[-1]
+    final_pred_knn = y_pred_knn_sorted[-1]
+    final_pred_dt = y_pred_dt_sorted[-1]
+
+    # Print final values with data type and sector
+    print(f"Sector: {sector}")
+    print(f"Final LR Prediction: {final_pred_lr} (Type: {type(final_pred_lr)})")
+    print(f"Final k-NN Prediction: {final_pred_knn} (Type: {type(final_pred_knn)})")
+    print(f"Final DT Prediction: {final_pred_dt} (Type: {type(final_pred_dt)})")
+    print("-" * 50)
+
 plt.show()
