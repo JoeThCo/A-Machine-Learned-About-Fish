@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 
+from sklearn.preprocessing import StandardScaler
 from matplotlib import patheffects
-
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.tree import DecisionTreeRegressor
 
 by_sector_path = 'global-fishery-catch-by-sector.csv'
 sectors = ['Artisanal (small-scale commercial)', 'Discards', 'Industrial (large-scale commercial)', 'Recreational',
@@ -21,48 +20,43 @@ for sector in sectors:
     X = fishery_data['Year'].values.reshape(-1, 1)
     y = fishery_data[sector]
 
+    # standard data
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
     # Linear regression (limited to 2000-2010)
     lr_filter = (fishery_data['Year'] >= 2000) & (fishery_data['Year'] <= 2010)
     X_lr = fishery_data[lr_filter]['Year'].values.reshape(-1, 1)
     y_lr = fishery_data[lr_filter][sector]
 
-    # Linear regression
     model_lr = LinearRegression()
     model_lr.fit(X_lr, y_lr)
 
     # k-NN regression
     model_knn = KNeighborsRegressor(n_neighbors=3)
-    model_knn.fit(X, y)
+    model_knn.fit(X_scaled, y)
 
-    # Decision Tree Regression
-    model_dt = DecisionTreeRegressor()
-    model_dt.fit(X, y)
-
-    # X Predictions
+    # Predictions for Linear Regression
     X_extended_lr = np.arange(2010, 2015).reshape(-1, 1)
-
-    # Y Predictions
     y_prediction_lr_extended = model_lr.predict(X_extended_lr)
-    y_prediction_knn = model_knn.predict(X)
-    y_prediction_dt_extended = model_dt.predict(X)
 
-    # plot points
+    # Predictions for k-NN
+    y_prediction_knn = model_knn.predict(X_scaled)
+
+    # Plot points
     plt.scatter(X, y)
 
-    # Plot
-    line, = plt.plot(X_extended_lr, y_prediction_lr_extended, label=f'{sector}', linestyle='dashed')
+    # Plot Lines
+    line, = plt.plot(X_extended_lr, y_prediction_lr_extended, linestyle='dashed')
     line_color = line.get_color()
 
-    plt.plot(X, y_prediction_knn, linestyle='solid', color=line_color)
-    # plt.plot(X, y_prediction_dt_extended, label=f'{sector} DT', linestyle='-.')
-
-    # labels
+    plt.plot(X, y_prediction_knn, label=f'{sector} k-NN Regression', linestyle='solid', color=line_color)
     predicted_value_2015_lr = y_prediction_lr_extended[-1]
     formatted_value_2015_lr = '{:,}'.format(int(predicted_value_2015_lr))
     text = plt.text(2015, predicted_value_2015_lr, formatted_value_2015_lr, fontsize=16, verticalalignment='bottom',color=line_color)
     text.set_path_effects([patheffects.withStroke(linewidth=1, foreground='black')])
 
-# labels
+# Chart labels
 plt.xlabel('Year')
 plt.ylabel('Catch (in metric tons)')
 plt.title('Predicting Global Fishery Catch by Sector')
