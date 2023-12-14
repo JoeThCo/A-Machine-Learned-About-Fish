@@ -3,7 +3,6 @@ import pandas as pd
 from matplotlib import patheffects
 from sklearn.linear_model import LinearRegression
 import numpy as np
-from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsRegressor
 
 by_sector_path = 'global-fishery-catch-by-sector.csv'
@@ -57,7 +56,7 @@ for sector in sectors:
 # labels
 plt.xlabel('Year')
 plt.ylabel('Catch (in metric tons)')
-plt.title('Linear Regression of Global Fishery Catch by Sector')
+plt.title('Predicting Global Fishery Catch by Sector')
 plt.legend()
 
 plt.grid(True)
